@@ -19,7 +19,10 @@ public:
 
     void CheckTileThreat(SchaakStuk* &s);
 
-    void CheckCanKill(SchaakStuk* &s);
+    void CheckPieceThreat();
+
+    void CheckPieceThreat_HelpFunction( zw kleur, std::pair<int, int> pos);
+
 
 private:
     Game g;
@@ -33,6 +36,7 @@ private:
     void visualizationChange() override;
     void WhiteTurn(SchaakStuk* &s, std::string &turn, int x, int y);
     void BlackTurn(SchaakStuk* &s, std::string &turn, int x, int y);
+    void ClearBord();
 
 /*  Overgeerfde functies van ChessWindow:
 

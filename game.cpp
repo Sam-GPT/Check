@@ -10,7 +10,13 @@ Game::Game() {
     setStartBord();
 }
 
-Game::~Game() {}
+Game::~Game() {
+    for(const auto& p1 : bord){
+        for(auto p2 : p1){
+            delete p2;
+        }
+    }
+}
 
 // Zet het bord klaar; voeg de stukken op de jusite plaats toe
 void Game::setStartBord() {
@@ -91,13 +97,33 @@ bool Game::move(SchaakStuk* s, int r, int k) {
     zw KleurPiece = s->getKleur();
     std::pair<int,int> pair1 (r,k);
     std::vector<std::pair<int, int>> geldigZetten = s->geldige_zetten(*this);
+    std::pair<int,int> position = s->getPosition(*this);
 
     for(auto zet : geldigZetten){
         if(getPiece(r,k) != nullptr && getPiece(r,k)->getKleur() == KleurPiece){
             return false;
         }else{
             if(zet == pair1){
+                //This piece will delete the piece that is on the position where the piece will move
+                SchaakStuk* defeted = getPiece(r,k);
+                if(defeted != nullptr){
+                    DeadPiecePos = defeted->getPosition(*this);
+                    DeadPieceKleur = defeted->getKleur();
+                    DeadPieceType = defeted->piece().type();
+                    delete defeted;
+                    bord[r][k] = nullptr;
+                }else{
+                    DeadPiecePos = std::pair<int,int>(-1,-1);
+                    DeadPieceType = Piece::None;
+                }
+
+
+                //This piece will move the piece to the new position
+                lastMovedPiece = s;
+                lastMovedPiecePos = position;
+                lastState = bord;
                 setPiece(r, k, s);
+                s->IncrementMoves();
                 bord[firstClickPos.first][firstClickPos.second] = nullptr;
                 return true;
             }
@@ -129,7 +155,7 @@ bool Game::schaak(zw kleur) const{
 
 
 // Geeft true als kleur schaakmat staat
-bool Game::schaakmat(zw kleur) {
+bool Game::schaakmat(zw kleur) const {
     SchaakStuk* koning = getKoning(kleur);
     if(schaak(kleur) && koning->geldige_zetten(*this).empty()){
         return true;
@@ -140,7 +166,14 @@ bool Game::schaakmat(zw kleur) {
 // Geeft true als kleur pat staat
 // (pat = geen geldige zet mogelijk, maar kleur staat niet schaak;
 // dit resulteert in een gelijkspel)
-bool Game::pat(zw kleur) {
+bool Game::pat(zw kleur) const {
+    SchaakStuk* koning = getKoning(kleur);
+    if(!schaak(kleur) && koning->geldige_zetten(*this).empty()){
+        if(koning->getAantalMoves() >0){
+            return true;
+        }
+
+    }
     return false;
 }
 
@@ -167,45 +200,55 @@ void Game::setPiece(int r, int k, SchaakStuk* s)
     bord[r][k] = s;
 }
 
+//This function will return the board
 const std::vector<std::vector<SchaakStuk *>> &Game::getBord() const {
     return bord;
 }
 
+//This function will save the position of the first click
 void Game::setFirstClickPos(const std::pair<int, int> &firstClickPos) {
     Game::firstClickPos = firstClickPos;
 }
 
+//This function will return the position of the first click
 const std::pair<int, int> &Game::getFirstClickPos() const {
     return firstClickPos;
 }
 
+//This function will return the number of clicks
 int Game::getClick() const {
     return click;
 }
 
+//This function will save the number of clicks
 void Game::setClick(int click) {
     Game::click = click;
 }
 
-SchaakStuk *Game::getPiece1() const {
+//This function will return the piece that was clicked
+SchaakStuk *Game::RetrivePiece() const {
     return piece;
 }
 
-void Game::setPiece1(SchaakStuk *piece) {
+//This function will save the piece that was clicked
+void Game::SavePiece(SchaakStuk *piece) {
     Game::piece = piece;
 }
 
+//This function will return who's turn it is
 const std::string &Game::getTurn() const {
     return turn;
 }
 
+//This function will save who's turn it is
 void Game::setTurn(const std::string &turn) {
     Game::turn = turn;
 }
 
 
+//This function will return the king of the given color
 SchaakStuk *Game::getKoning(zw kleur) const {
-    for(auto p1 : bord){
+    for(const auto& p1 : bord){
         for(auto p2 : p1){
             if(p2 != nullptr){
                 if(p2->getKleur() == kleur && dynamic_cast<Koning*>(p2) != nullptr){
@@ -229,6 +272,7 @@ std::vector<std::vector<std::pair<int, int>>> Game::TegenStanderPositions(zw &kl
                 int y = position.second;
                 std::vector<std::pair<int, int>> zetten = {};
 
+                //Down
                 if(x+1 <= 7){
                     std::pair <int, int> geldig (x+1, y);
                     zetten.push_back(geldig);
@@ -272,7 +316,7 @@ std::vector<std::vector<std::pair<int, int>>> Game::TegenStanderPositions(zw &kl
                     std::pair <int, int> geldig (x-1, y-1);
                     zetten.push_back(geldig);
                 }
-
+                //Left-Down Diagonal
                 if(x+1 <=7 && y-1 >=0){
                     std::pair <int, int> geldig (x+1, y-1);
                     zetten.push_back(geldig);
@@ -288,5 +332,43 @@ std::vector<std::vector<std::pair<int, int>>> Game::TegenStanderPositions(zw &kl
         }
     }
     return dynamicVector;
+}
+
+void Game::setBord(const std::vector<std::vector<SchaakStuk *>> &bord) {
+    Game::bord = bord;
+
+}
+
+const std::pair<int, int> &Game::getLastMovedPiecePos() const {
+    return lastMovedPiecePos;
+}
+
+SchaakStuk *Game::getLastMovedPiece() const {
+    return lastMovedPiece;
+}
+
+
+std::vector<std::vector<SchaakStuk *>> Game::getLastState() const {
+    return lastState;
+}
+
+std::pair<int, int> Game::getDeadPiecePos() const {
+    return DeadPiecePos;
+}
+
+Piece::Type Game::getDeadPieceType() const {
+    return DeadPieceType;
+}
+
+zw Game::getDeadPieceKleur() const {
+    return DeadPieceKleur;
+}
+
+const std::vector<std::vector<SchaakStuk *>> &Game::getCurrentState() const {
+    return currentState;
+}
+
+void Game::setCurrentState(const std::vector<std::vector<SchaakStuk *>> &currentState) {
+    Game::currentState = currentState;
 }
 

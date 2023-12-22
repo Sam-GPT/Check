@@ -1,6 +1,7 @@
 //  Student:
 //  Rolnummer:
-//  Opmerkingen: (bvb aanpassingen van de opgave)
+//  Opmerkingen: Bij de Save methode in SchaakGUI wordt er twee files aangemaakt. De eerste file slaagt de toestand van
+// het bord op. De tweede file slaagt wie zijn beurt het is op. Dit is nodig omdat de GUI niet weet wie zijn beurt het is.
 //
 
 #ifndef SCHAAK_GAME_H
@@ -17,15 +18,41 @@ protected:
     int click = 0;
     SchaakStuk* piece = nullptr;
     std::string turn = "wit";
+    SchaakStuk* lastMovedPiece = nullptr;
+    std::pair<int,int> lastMovedPiecePos;
+    std::vector<std::vector<SchaakStuk*>> lastState = {};
+    std::vector<std::vector<SchaakStuk*>> currentState = {};
+    std::pair<int,int> DeadPiecePos;
+    Piece::Type DeadPieceType;
+    zw DeadPieceKleur;
+
+
 public:
     const std::string &getTurn() const;
 
     void setTurn(const std::string &turn);
 
-public:
-    SchaakStuk *getPiece1() const;
+    const std::pair<int, int> &getLastMovedPiecePos() const;
 
-    void setPiece1(SchaakStuk *piece);
+
+    SchaakStuk *getLastMovedPiece() const;
+
+    std::vector<std::vector<SchaakStuk*>> getLastState() const;
+
+    std::pair<int,int> getDeadPiecePos() const;
+
+    Piece::Type getDeadPieceType() const;
+
+    zw getDeadPieceKleur() const;
+
+    const std::vector<std::vector<SchaakStuk *>> &getCurrentState() const;
+
+    void setCurrentState(const std::vector<std::vector<SchaakStuk *>> &currentState);
+
+public:
+    SchaakStuk *RetrivePiece() const;
+
+    void SavePiece(SchaakStuk *piece);
 
 
     SchaakStuk* getKoning(zw kleur) const;
@@ -47,14 +74,22 @@ public:
     bool move(SchaakStuk* s,int r, int k); // Verplaats stuk s naar rij r en kolom k
 
     bool schaak(zw kleur) const;
-    bool schaakmat(zw kleur);
-    bool pat(zw kleur);
+
+    bool schaakmat(zw kleur) const;
+
+    bool pat(zw kleur) const;
+
     void setStartBord();
+
     std::vector<std::vector<std::pair<int, int>>> TegenStanderPositions(zw &kleur, const Game &g) const;
 
     SchaakStuk* getPiece(int r, int k) const;
+
     void setPiece(int r, int k, SchaakStuk* s);
+
     const std::vector<std::vector<SchaakStuk *>> &getBord() const;
+
+    void setBord(const std::vector<std::vector<SchaakStuk *>> &bord);
 
 private:
     // Hier zet jij jouw datastructuur neer om het bord te bewaren ...
