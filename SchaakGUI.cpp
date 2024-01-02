@@ -231,11 +231,12 @@ void SchaakGUI::open() {
 
 
 void SchaakGUI::undo() {
-    g.setCurrentState(g.getBord());
-    SchaakStuk* piece = g.getLastMovedPiece();
-    std::pair<int,int> pos = g.getLastMovedPiecePos();
-    std::pair<int,int> pos2 = g.getDeadPiecePos();
-    SchaakStuk* resurectedPiece = nullptr;
+    if(g.getAantalUndo() == 0){
+        g.setCurrentState(g.getBord());
+        SchaakStuk* piece = g.getLastMovedPiece();
+        std::pair<int,int> pos = g.getLastMovedPiecePos();
+        std::pair<int,int> pos2 = g.getDeadPiecePos();
+        SchaakStuk* resurectedPiece = nullptr;
 
         if(g.getDeadPieceType() != Piece::None){
             if(g.getDeadPieceType() == Piece::Pawn){
@@ -260,46 +261,65 @@ void SchaakGUI::undo() {
 
 
 
-
-    if(g.getTurn() == "wit"){
         if(piece->piece().type() == Piece::Pawn && piece->getAantalMoves() == 1){
             piece->DecrementMoves();
         }
-        g.setTurn("zwart");
-        g.setBord(g.getLastState());
-        if(g.getDeadPieceType() != Piece::None){
-            g.setPiece(pos2.first, pos2.second, resurectedPiece);
-        }
-        update();
-        return;
+        if(g.getTurn() == "wit"){
+            g.setTurn("zwart");
+            g.setBord(g.getLastState());
+            if(g.getDeadPieceType() != Piece::None){
+                g.setPiece(pos2.first, pos2.second, resurectedPiece);
+            }
+            g.setAantalUndo(1);
+            update();
 
-    }
-    if(g.getTurn() == "zwart"){
-        if(piece->piece().type() == Piece::Pawn && piece->getAantalMoves() == 1){
-            piece->DecrementMoves();
+            return;
+
         }
-        g.setTurn("wit");
-        g.setBord(g.getLastState());
+        if(g.getTurn() == "zwart"){
+            g.setTurn("wit");
+            g.setBord(g.getLastState());
+            g.setAantalUndo(1);
+
+        }
         if(g.getDeadPieceType() != Piece::None){
             g.setPiece(pos2.first, pos2.second, resurectedPiece);
+
         }
+
         update();
+    }else{
+        message("Undo not allowed!");
     }
+
+
 
 }
 
 void SchaakGUI::redo() {
-    if(g.getTurn() == "wit"){
-        g.setTurn("zwart");
-        g.setBord(g.getCurrentState());
-        update();
-        return;
+    if(g.getAantalRedo() == 0){
+        SchaakStuk* piece = g.getLastMovedPiece();
+        if(piece->piece().type() == Piece::Pawn && piece->getAantalMoves() == 0){
+            piece->IncrementMoves();
+        }
+        if(g.getTurn() == "wit"){
+            g.setTurn("zwart");
+            g.setBord(g.getCurrentState());
+            g.setAantalRedo(1);
+            update();
+
+            return;
+        }
+        if(g.getTurn() == "zwart"){
+            g.setTurn("wit");
+            g.setBord(g.getCurrentState());
+            g.setAantalRedo(1);
+            update();
+        }
+    }else{
+        message("Redo not allowed!");
     }
-    if(g.getTurn() == "zwart"){
-        g.setTurn("wit");
-        g.setBord(g.getCurrentState());
-        update();
-    }
+
 
 }
 
@@ -389,7 +409,7 @@ void SchaakGUI::WhiteTurn(SchaakStuk* &s, std::string &turn, int x, int y) {
         }
         //This else statement will give a message if the move is not valid
         else{
-            message("Move niet geldig White");
+            message("Move niet geldig");
 
         }
     }
@@ -480,7 +500,7 @@ void SchaakGUI::BlackTurn(SchaakStuk *&s, std::string &turn, int x, int y) {
         }
         //This else statement will give a message if the move is not valid
         else{
-            message("Move niet geldig Black");
+            message("Move niet geldig");
 
         }
 

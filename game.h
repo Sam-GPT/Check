@@ -14,48 +14,59 @@
 class Game {
 // variabelen om de status van het spel/bord te bewaren
 protected:
-    std::pair<int,int> firstClickPos;
-    int click = 0;
+    std::pair<int,int> firstClickPos; // positie van eerste klik
+    int click = 0; // aantal keren geklikt
     SchaakStuk* piece = nullptr;
     std::string turn = "wit";
-    SchaakStuk* lastMovedPiece = nullptr;
-    std::pair<int,int> lastMovedPiecePos;
-    std::vector<std::vector<SchaakStuk*>> lastState = {};
-    std::vector<std::vector<SchaakStuk*>> currentState = {};
-    std::pair<int,int> DeadPiecePos;
-    Piece::Type DeadPieceType;
-    zw DeadPieceKleur;
+    SchaakStuk* lastMovedPiece = nullptr; // laatst verplaatste stuk
+    std::pair<int,int> lastMovedPiecePos; // positie van laatst verplaatste stuk
+    std::vector<std::vector<SchaakStuk*>> lastState = {}; // laatste toestand van het bord
+    std::vector<std::vector<SchaakStuk*>> currentState = {}; // huidige toestand van het bord
+    std::pair<int,int> DeadPiecePos; // positie van het gedode stuk
+    Piece::Type DeadPieceType; // type van het gedode stuk
+    zw DeadPieceKleur; // kleur van het gedode stuk
+    int aantalUndo;
+    int aantalRedo;
 
 
 public:
-    const std::string &getTurn() const;
+    const std::string &getTurn() const; // geeft de kleur van de speler die aan de beurt is
 
-    void setTurn(const std::string &turn);
+    void setTurn(const std::string &turn); // verandert de kleur van de speler die aan de beurt is
 
-    const std::pair<int, int> &getLastMovedPiecePos() const;
+    const std::pair<int, int> &getLastMovedPiecePos() const; // geeft de positie van het laatst verplaatste stuk
 
 
-    SchaakStuk *getLastMovedPiece() const;
+    SchaakStuk *getLastMovedPiece() const; // geeft het laatst verplaatste stuk
 
-    std::vector<std::vector<SchaakStuk*>> getLastState() const;
+    std::vector<std::vector<SchaakStuk*>> getLastState() const; // geeft de laatste toestand van het bord
 
-    std::pair<int,int> getDeadPiecePos() const;
+    std::pair<int,int> getDeadPiecePos() const; // geeft de positie van het gedode stuk
 
-    Piece::Type getDeadPieceType() const;
+    Piece::Type getDeadPieceType() const; // geeft het type van het gedode stuk
 
-    zw getDeadPieceKleur() const;
+    zw getDeadPieceKleur() const; // geeft de kleur van het gedode stuk
 
-    const std::vector<std::vector<SchaakStuk *>> &getCurrentState() const;
+    const std::vector<std::vector<SchaakStuk *>> &getCurrentState() const; // geeft de huidige toestand van het bord
 
-    void setCurrentState(const std::vector<std::vector<SchaakStuk *>> &currentState);
+    void setCurrentState(const std::vector<std::vector<SchaakStuk *>> &currentState); // verandert de huidige toestand van het bord
+
+    int getAantalUndo() const;
+
+    void setAantalUndo(int aantalUndo);
+
+    int getAantalRedo() const;
+
+    void setAantalRedo(int aantalRedo);
+
 
 public:
-    SchaakStuk *RetrivePiece() const;
+    SchaakStuk *RetrivePiece() const; // geeft het stuk dat verplaatst is
 
-    void SavePiece(SchaakStuk *piece);
+    void SavePiece(SchaakStuk *piece); // slaagt het stuk dat verplaatst is op
 
 
-    SchaakStuk* getKoning(zw kleur) const;
+    SchaakStuk* getKoning(zw kleur) const; // geeft de koning van de gegeven kleur
 
 
 public:
@@ -81,7 +92,7 @@ public:
 
     void setStartBord();
 
-    std::vector<std::vector<std::pair<int, int>>> TegenStanderPositions(zw &kleur, const Game &g) const;
+    std::vector<std::vector<std::pair<int, int>>> TegenStanderPositions(zw &kleur, const Game &g) const; // geeft de posities van de stukken van de tegenstander
 
     SchaakStuk* getPiece(int r, int k) const;
 

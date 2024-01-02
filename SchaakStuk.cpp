@@ -55,7 +55,10 @@ std::vector<std::pair<int, int>> Pion::geldige_zetten(const Game &g) const {
         //This if statement will check if Black's pawn can move forward by one
         if(x+1 <= 7 ){
             std::pair <int, int> geldig (x+1, y);
-            zetten.push_back(geldig);
+            if(g.getPiece(geldig.first, geldig.second) == nullptr){
+                zetten.push_back(geldig);
+            }
+
         }
 
         //This if statement will check if Black's pawn can move forward by two but this will only be
@@ -85,7 +88,9 @@ std::vector<std::pair<int, int>> Pion::geldige_zetten(const Game &g) const {
         //This if statement will check if White's pawn can move forward by one
         if(x-1 >= 0 ){
             std::pair <int, int> geldig (x-1, y);
-            zetten.push_back(geldig);
+            if(g.getPiece(geldig.first, geldig.second) == nullptr){
+                zetten.push_back(geldig);
+            }
         }
 
         //This if statement will check if Black's pawn can move forward by two but this will only be

@@ -123,6 +123,8 @@ bool Game::move(SchaakStuk* s, int r, int k) {
                 lastMovedPiecePos = position;
                 lastState = bord;
                 setPiece(r, k, s);
+                aantalUndo = 0;
+                aantalRedo = 0;
                 s->IncrementMoves();
                 bord[firstClickPos.first][firstClickPos.second] = nullptr;
                 return true;
@@ -370,5 +372,21 @@ const std::vector<std::vector<SchaakStuk *>> &Game::getCurrentState() const {
 
 void Game::setCurrentState(const std::vector<std::vector<SchaakStuk *>> &currentState) {
     Game::currentState = currentState;
+}
+
+int Game::getAantalUndo() const {
+    return aantalUndo;
+}
+
+void Game::setAantalUndo(int aantalUndo) {
+    Game::aantalUndo = aantalUndo;
+}
+
+int Game::getAantalRedo() const {
+    return aantalRedo;
+}
+
+void Game::setAantalRedo(int aantalRedo) {
+    Game::aantalRedo = aantalRedo;
 }
 
