@@ -22,7 +22,7 @@ public:
                                         // setItem(x,y,SchaakStuk*) van
                                         // SchaakGUI
 
-    zw getKleur() const { return kleur; }
+    zw getKleur() const;
 
     virtual std::vector<std::pair<int,int>> geldige_zetten(const Game& g) const = 0;
 

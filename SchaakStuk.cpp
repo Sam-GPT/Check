@@ -42,6 +42,10 @@ void SchaakStuk::DecrementMoves() {
     aantalMoves--;
 }
 
+zw SchaakStuk::getKleur() const {
+    return kleur;
+}
+
 SchaakStuk::~SchaakStuk() = default;
 
 
@@ -70,7 +74,8 @@ std::vector<std::pair<int, int>> Pion::geldige_zetten(const Game &g) const {
 
         //This if statement will check if Black's pawn is able to capture a piece in a different colum.
         if(x+1 <= 7 && y-1 >=0){
-            if(g.getPiece(x+1, y-1) != nullptr && g.getPiece(x+1, y-1)->getKleur() != this->getKleur()){
+            auto piece = g.getPiece(x+1, y-1);
+            if(piece != nullptr && piece->getKleur() != this->getKleur()){
                 std::pair <int, int> geldig (x+1, y-1);
                 zetten.push_back(geldig);
             }
@@ -78,7 +83,8 @@ std::vector<std::pair<int, int>> Pion::geldige_zetten(const Game &g) const {
 
         //This if statement will check if Black's pawn is able to capture a piece in a different colum.
         if(x+1 <= 7 && y+1 >=0){
-            if(g.getPiece(x+1, y+1) != nullptr && g.getPiece(x+1, y+1)->getKleur() != this->getKleur()){
+            auto piece = g.getPiece(x+1, y+1);
+            if(piece != nullptr && piece->getKleur() != zwart){
                 std::pair <int, int> geldig (x+1, y+1);
                 zetten.push_back(geldig);
             }
@@ -102,14 +108,16 @@ std::vector<std::pair<int, int>> Pion::geldige_zetten(const Game &g) const {
         }
         //This if statement will check if Black's pawn is able to capture a piece in a different colum.
         if(x-1 <= 7 && y-1 >=0){
-            if(g.getPiece(x-1, y-1) != nullptr && g.getPiece(x-1, y-1)->getKleur() != this->getKleur()){
+            auto piece = g.getPiece(x-1, y-1);
+            if(piece != nullptr && piece->getKleur() != this->getKleur()){
                 std::pair <int, int> geldig (x-1, y-1);
                 zetten.push_back(geldig);
             }
         }
         //This if statement will check if Black's pawn is able to capture a piece in a different colum.
         if(x-1 <= 7 && y+1 >=0){
-            if(g.getPiece(x-1, y+1) != nullptr && g.getPiece(x-1, y+1)->getKleur() != this->getKleur()){
+            auto piece = g.getPiece(x-1, y+1);
+            if(piece != nullptr && piece->getKleur() != this->getKleur()){
                 std::pair <int, int> geldig (x-1, y+1);
                 zetten.push_back(geldig);
             }
