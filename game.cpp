@@ -183,13 +183,10 @@ bool Game::pat(zw kleur) const {
 // Als er geen schaakstuk staat op deze positie, geef nullptr terug
 SchaakStuk* Game::getPiece(int r, int k) const{
     // Hier komt jouw code om op te halen welk stuk op rij r, kolom k staat
-    SchaakStuk* stuk = bord[r][k];
-    if (dynamic_cast<SchaakStuk*>(stuk) != nullptr ){
-        return stuk;
-    }else{
-        return nullptr;
-    }
+    if(r > 7 || r<0 || k > 7 || k < 0) return nullptr;
 
+    SchaakStuk* stuk = bord[r][k];
+    return stuk;
 }
 
 // Zet het schaakstuk waar s naar verwijst neer op rij r, kolom k.
